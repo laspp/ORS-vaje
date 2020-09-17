@@ -1,0 +1,293 @@
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Vaja 1}
+\lhead{ORS}
+\setlength{\headheight}{16pt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[slovene]{babel}
+\usepackage[colorlinks = true, urlcolor = blue]{hyperref}
+
+\usepackage{xcolor}
+\usepackage{listings}
+
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{backgroundColour}{rgb}{1,1,1}
+
+\lstdefinestyle{CStyle}{
+    backgroundcolor=\color{backgroundColour},   
+    commentstyle=\color{mGreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{mGray},
+    stringstyle=\color{mPurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=C,
+    frame=none
+}
+
+\begin{document}
+
+\begin{center}
+    \textbf{\Large Uvod v vaje in osnove programskega jezika C}   
+\end{center}
+
+
+\section*{Pravila predmeta}
+
+Vaje pri predmetu izvajava asistenta:
+\begin{itemize}
+    \item Jure Demšar (jure.demsar@fri.uni-lj.si),
+    \item Rok Češnovar (rok.cesnovar@fri.uni-lj.si).
+\end{itemize}
+
+Govorilne ure pri obeh asistentih potekajo po dogovoru. Vsa vprašanja v zvezi s predmetom zastavljajte na forumu e-učilnice. Izjema so vprašanja, ki so specifično vezana samo na vas (izostanki, dogovor za govorilne, itd.). Zdravniška opravičila urejajte preko študentskega referata.
+
+Vaje se izvajajo s pomočjo predlog za izvedbo vaj. Asistenti tako na vajah ne bodo ponovno razlagali snovi iz predavanj ampak bodo zgolj osvetlili posamezne praktične dele. Pred vajo si obvezno preberite gradivo za vajo, ki bo objavljeno na učilnici, najkasneje v petek v tednu pred vajo. Predloge za vaje vsako leto malo osvežimo in pregledamo, se nam pa zagotovo v tekst ali primere prikrade kakšna napaka. Vse napake, ki jih opazite, prosimo sporočite na e-učilnico ali na napako opozorite asistenta na vajah. Hvala!
+
+V semestru bomo predvidoma izvedli devet vaj, dve od devetih bosta zaradi obsežnosti potekali dva tedna. Vsako vajo boste morali zagovoriti pri asistentu v vašem terminu vaj. Na zagovoru boste pokazali vašo rešitev naloge in odgovorili na morebitno vprašanje. Zagovor vaj se oceni z opravil/ni opravil. Za uspešno opravljene vaje se šteje, če uspešno opravite vsaj osem od predvidenih devetih vaj. Vse vaje bodo zastavljene tako, da jih je mogoče opraviti v času, ki je vaji namenjen (ob predpostavki da ste se na vajo ustrezno pripravili).
+
+Menjave terminov so dovoljene zgolj v primeru uradnih prekrivanj na urniku, ali v primeru da najdete zamenjavo v drugem terminu. Vse menjave bomo urejali med vajami, prosimo da prošenj ne pošiljate po elektronski pošti ali na e-učilnico.
+
+Želimo vam uspešen semester in veliko pridobljenega znanja!
+
+
+\section*{Oprema za vaje}
+
+Na vajah bomo uporabljali razvojno ploščo STM32F4 Discovery. Ploščo bomo podrobno spoznavali čez celoten semester. Na e-učilnici je na voljo dokumentacija razvojne plošče. Za uspešno opravljanje vaje nakup plošče ni potreben, saj boste na vajah plošče imeli na razpolago. Tistim, ki boste na predmetu imeli težave, pa priporočamo nakup razvojne plošče pri kakšnem od kolegov iz prejšnjih generacij ali na kateri izmed spletnih trgovin (npr. \href{https://si.farnell.com/stmicroelectronics/stm32f407g-disc1/dev-board-foundation-line-mcu/dp/2506840?st=stm32f407}{Farnell}).
+
+Za razvoj programov, razhroščevanje in programiranje razvojne plošče bomo uporabljali orodje STM32CubeIDE, ki se lahko uporablja za razvoj poljubnega mikrokrmilnika proizvajalca STMicroelectronics. Orodje je brezplačno in na voljo za vse operacijske sisteme, naložite si ga lahko na \href{https://www.st.com/en/development-tools/stm32cubeide.html}{https://www.st.com}.
+
+
+\section*{Osvežitev programskega jezika C}
+
+Gradivo, ki ga berete, ni mišljeno kot celostna ponovitev programskega jezika C. Namenjeno je osvetlitvi določenih podrobnosti, ki jih bomo pogosto uporabljali in tistih tematik na katerih v dosedanjem času študija ni bilo dosti poudarka. V primeru, da menite, da je vaše znanje C-ja šibko, vam predlagamo, da pred naslednjim tednom pregledate katerega izmed spletnih tečajev ali prelistate katero izmed množice knjig o programskem jeziku C.
+
+
+\subsection*{Podatkovni tipi}
+
+Klasični primitivni podatkovni tipi v C-ju so, upajmo da, dobro znani vsakemu izmed vas. Za predstavitev celih števil uporabljamo \textbf{char}, \textbf{short int} (ali krajše \textbf{short}), \textbf{int}, \textbf{long int} (krajše \textbf{long}) ter \textbf{long long int} (krajše \textbf{long long}). Vsi omenjeni tipi imajo tudi nepredznačene oblike, ki jih dobite s predpono \textbf{unsigned}, na primer \textbf{unsigned int}. Tabela \ref{byti} prikazuje število bitov, ki jih običajno zasede posamezen podatkovni tip.
+
+\begin{table}[ht!]
+    \caption{Podatkovni tipi.}
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        Podatkovni tip & Število bitov  \\ \hline
+        char           & 8              \\ \hline
+        short          & 16             \\ \hline
+        int            & 32             \\ \hline
+        long           & 32             \\ \hline
+        long long      & 64             \\ \hline
+    \end{tabular}
+    \label{byti}
+\end{table}
+
+Nimamo pa zagotovila, da bodo ti podatkovni tipi točno takšnih dolžin. Za podatkovni tip \textbf{char} vemo zgolj, da bo dolžina vsaj 8 bitov, lahko pa je tudi več. Pogosto bomo želeli bolj natančno določiti oziroma bolj jasno pokazati, koliko bitov naj zasede naša spremenljivka. Takrat bomo raje uporabili podatkovne tipe \textbf{int8\_t}, \textbf{int16\_t}, \textbf{int32\_t}, \textbf{uint8\_t}, \textbf{uint16\_t}, \textbf{uint32\_t}, ki so definirani v \texttt{<stdint.h>}. Dolžina tipov v bitih je tu podana kar v imenu, predpona \textbf{u} pa označuje nepredznačene tipe. Za te podatkovne tipe imamo zagotovilo, da če jih je na nekem sistemu mogoče uporabiti, bodo vedno pričakovanih dolžin.
+
+
+\subsection*{Bitne operacije}
+C omogoča sledeče operacije nad biti:
+\begin{itemize}
+    \item bitni in \texttt{x  \&  y},
+    \item bitni ali \texttt{x  |  y},
+    \item bitni xor \texttt{x \^{} y},
+    \item bitna negacija \texttt{$\sim x$},
+    \item pomik bitov v desno \texttt{x  >>  2},
+    \item pomik bitov v levo \texttt{x  <<  3}.
+\end{itemize}
+
+Pri pomiku bitov v levo, se izpraznjeni bit vedno postavi na vrednost 0. Pri pomiku v desno se na izpraznjeno mesto pri nepredznačenih številih vpiše ničla, pri predznačenih pa se na izpraznjeno mesto vpiše vrednost zadnjega bita pred pomikom (predznaka).
+
+Bitne operacije so pri delu z mikrokrmilniki nepogrešljive. Z njimi bomo izvajali predvsem sledeč operacije:
+
+\subsubsection*{Postavi bit (Set Bits)}
+Pogosto bomo želeli bit $b_i$ v $n$-bitni spremenljivki spremeniti v enico, pri tem pa ostale bite ohraniti na istem stanju. Na ta način bomo na primer prižgali LED diodo, zagnali motorček, itd. To najlažje dosežemo z operacijo ali (\texttt{a = a | x;}), kjer je $x$ konstanta v kateri je zgolj bit $b_i$ nastavljen na 1. Takšno število najlažje ustvarimo tako, da enico pomaknemo za $i$ mest v levo. Ukaz, ki v spremenljivki $a$ nastavi bit $b_i$ je tako:
+
+\begin{center}
+\begin{lstlisting}[style=CStyle]
+    a = a | (1 << i);
+\end{lstlisting}
+\end{center}
+
+\subsubsection*{Pobriši bit (Reset Bits)}
+
+Seveda bomo želeli na enak način bite tudi pobrisati oz. ponastaviti, torej vrednost bita $b_i$ v $n$-bitnem številu spremeniti v ničlo, ostale bite pa ohraniti v istem stanju. Najenostavneje to dosežemo z operacijo \textbf{in} (\texttt{a = a \& x;}), kjer je $x$ konstanta v kateri je zgolj bit $b_i$ nastavljen na 0, ostali biti pa na 1. Takšno konstanto najlažje ustvarimo tako, da enico pomaknemo za $i$ mest, kot v prejšnjem primeru, nato pa dobljeno konstanto negiramo. Ukaz, ki spremenljivki $a$ pobriše bit $b_i$ je tako:
+
+\begin{center}
+\begin{lstlisting}[style=CStyle]
+    a = a & ~(1 << i);
+\end{lstlisting}
+\end{center}
+
+\subsubsection*{Negiraj bit (Toggle Bits)}
+
+Z operacijo negacije obrnemo vrednost posameznega bita pri čemer stanje ostalih bitov ohranimo. To dosežemo na enak način kot pri postavljanju bita, le da namesto operacije ali uporabimo operacijo ekskluzivni ali (\textbf{xor}):
+
+\begin{center}
+\begin{lstlisting}[style=CStyle]
+    a = a ^ (1 << i);
+\end{lstlisting}
+\end{center}
+\newpage
+
+\subsubsection*{Testiraj bit (Test Bits)}
+Velikokrat nas bo zanimala vrednost bita $b_i$ v $n$-bitni spremenljivki. Na ta način bomo na primer ugotavljali ali je gumb pritisnjen ali spuščen. Najenostavnejši postopek za testiranje vrednosti bita $b_i$ je:
+
+\begin{center}
+\begin{lstlisting}[style=CStyle]
+    // testiraj bit i
+    a & (1 << i);
+    
+    // primer testiranja bita j
+    if (a & (1 << j)) {
+        // ce je bit j enica
+    } else {
+        // ce je bit j nicla
+    }
+\end{lstlisting}
+\end{center}
+
+\subsection*{Kazalci}
+
+Kazalci v jeziku C so pogosto trn v peti vsakega študenta. Pri predmetu Organizacija računalniških sistemov s kazalci ne bomo ustvarjali kompleksnih podatkovnih struktur, ampak bomo uporabljali njihov primarni namen -- kazanje na specifični naslov.
+
+\textbf{Kazalec je namreč zgolj spremenljivka, katere vrednost predstavlja naslov. Tip kazalca pa nam pove kakšnega tipa je spremenljivka katere vrednost je v kazalcu.}
+
+Kazalec določenega tipa definiramo tako, da poleg tipa dodamo zvezdico. \textbf{int*} predstavlja kazalec na spremenljivko tipa \textbf{int}. Naslov torej \textit{kaže} na 4 bajte, katerih vrednost predstavlja predznačeno celo število. Če imamo spremenljivko $a$ definirano kot \texttt{int a = 4;}, kazalec na spremenljivko dobimo z ukazom \texttt{int *p = \&a;}. Znak \& pred imenom spremenljivke namreč vrača njen naslov. Spodaj je podana koda običajnih ukazov, ki jih izvajamo s kazalci. Razlaga je podana v komentarjih:
+
+\begin{center}
+\begin{lstlisting}[style=CStyle]
+    // definiramo kazalec
+    int *p;
+    // definiramo spremenljivko 
+    int a = 26;
+    
+    p = &a; // kazalec kaze na a, recimo da se nahaja na naslovu 0x200
+    *p = 12; // vrednost na naslovu 0x200 nastavimo na 12, kar pomeni da je vrednost a 12
+    
+    *(p+1) = 7; // vrednost na naslovu 0x204 nastavi na 7   
+    // v zgornjem primeru s povecavo stevca za 1 pridemo do naslova 0x204 (0x200 + 0x4), do stirice pridemo, ker je na naslovu 0x200 spremenljivka tipa int, ki zaseda 4 bajte
+    
+    // cesa ne smemo poceti s kazalci
+    // vse od spodaj nastetega je slaba praksa ali pa neveljaven ukaz
+    p = a; // TEGA NE POCNITE! S tem bi naslov kazalca spremenili na 12. Kaj je na naslovu 12 obicajno ne vemo!
+    *a = 6; // TUDI TEGA NE POCNITE! S tem ukazom bi vrednost na naslov 12 nastavili na 6.
+    
+    &a = 4; // neveljaven ukaz
+    &p = 6; // neveljaven ukaz
+\end{lstlisting}
+\end{center}
+
+Kazalce bomo pri vajah predmeta ORS uporabljali predvsem takrat, ko bomo želeli pisati na točno določene naslove. Drug primer pa je, ko bomo želeli da funkcija spreminja vrednost argumenta. Primer takšne uporabe je prikazan spodaj. Funkciji \texttt{fun\_value} podamo vrednost spremenljivke x, ki jo potem v funkciji spremenimo. Ker je bila spremenljivka podana kot vrednost, se ta sprememba ne pozna v funkciji, ki kliče \texttt{fun\_value}. V primeru, da si želimo takšnega obnašanja, moramo parameter x podati kot kazalec, v funkciji pa spreminjati vrednost na naslovu na katerega kaže ta kazalec. Tak primer je prikazan v funkciji \texttt{fun\_reference}.
+
+\begin{center}
+\begin{lstlisting}[style=CStyle]
+    void fun_value(int a) {
+        // ...
+        a = 4;
+        // ...
+    }
+    
+    void fun_reference(int* a) {
+        // ...
+        *a = 7;
+        // ...
+    }
+    
+    int main() {
+        int x = 1;
+        fun_value(x);
+        // x je tu se vedno 1
+        fun_reference(&x);
+        // x je sedaj 7 tudi v main funkciji
+    }
+\end{lstlisting}
+\end{center}
+
+
+\subsection*{Strukture}
+
+Struktura v jeziku C je zbirka spremenljivk različnih osnovnih tipov. 
+
+\begin{center}
+\begin{lstlisting}[style=CStyle]
+    struct circle {
+        int x;
+        int y;
+        uint16_t z;
+        float r;
+    };
+    
+    struct circle a;
+    a.x = 4;
+    a.y = 6;
+    
+    struct circle *b;
+    b->x = 3;
+    b->y = 7;
+\end{lstlisting}
+\end{center}
+
+Posebnost struktur, ki jo bomo s pridom izkoriščali tekom semestra, je ta, da se elementi strukture v pomnilniku vedno nahajajo zaporedno. Če se zgornja struktura začne na naslov 200, potem vemo, da se element \textit{x} nahaja na naslovu 0x200, element \textit{y} na naslovu 0x204, element \textit{z} na naslovu 0x208, element \textit{r} pa na naslovu 0x20A.
+
+Druga posebnost struktur je njihova uporaba v kombinaciji s kazalci. Kazalec na strukturo definiramo enako kot vsak drug kazalec, kar lahko vidite v zgornjem primeru. Naivno bi tako lahko pričakovali, da bomo do posameznih elementov dostopali z \texttt{*b.x = 3;}. Težava nastopi, ker ima pika najvišjo prioriteto med operatorji zato bi to morali zapisati kot \texttt{(*b).x}, kar pa je precej neberljivo. Namesto tega lahko uporabimo bolj pregledno obliko s puščico: \texttt{b->x}.
+
+\newpage
+
+\section*{Naloge}
+
+\begin{enumerate}
+    \item Predpostavimo, da program v C-ju prevajamo za procesor HIP, ki ste ga spoznali pri predmetu Arhitektura računalniških sistemov. V kateri ukaz se prevede pomik v desno, če je spremenljivka tipa \textit{uint8\_t}? Kaj pa, če je spremenljivka tipa \textit{int8\_t}?
+    \item Kakšna je razlika med bitno operacijo in (npr. $7 \& 3$) ter logično operacijo in (npr. $7 \&\& 3$). Sta rezultata enaka? Utemeljite vaš odgovor.
+    \item Zakaj je zaporedje ukazov \texttt{int i = 5; \&i = 3;} neveljavno? Kaj bi dejansko storili, če bi prevajalnik to zaporedje ukaza dovolil?
+    \item Implementirajte naslednje funkcije:
+\begin{itemize}
+    \item \texttt{reset\_bit(uint32\_t* x, uint8\_t p)} – resetiraj p-ti bit števila na katerega kaže kazalec x.
+    \item \texttt{reset\_two\_bits(uint32\_t* x, uint8\_t p)} – resetiraj bita p in p+1 števila na katerega kaže kazalec x.
+    \item \texttt{set\_bit(uint32\_t* x, uint8\_t p)} – p-ti bit števila na katerega kaže kazalec x nastavi na 1. 
+    \item \texttt{set\_two\_bits\_to(uint32\_t* x, uint8\_t p, uint8\_t n)} – bita p in p+1 števila na katerega kaže x nastavi na vrednost n (00, 01, 10, 11)
+    \item \texttt{vector\_length(struct vector a*)}, ki prejme kazalec na strukturo \texttt{struct vector} s tremi elementi: \texttt{x}, \texttt{y}, \texttt{length}. Prva dva elementa sta predznačeni celi števili, \texttt{length} pa število v plavajoči vejici. Funkcija \texttt{vector\_length} na podlagi vrednosti \texttt{x} in \texttt{y} izračuna dolžino vektorja ($length = \sqrt{x^2+y^2}$) in jo zapiše v \texttt{length}. Funkcija nič ne vrača.
+\end{itemize}
+\end{enumerate}
+\newpage
+
+
+\subsection*{Primeri in namigi}
+
+Primeri za testiranje vaših rešitev 4. naloge: 
+\begin{center}
+\begin{lstlisting}[style=CStyle]
+    uint32_t a;
+    a = 0xF;    reset_bit(&a, 2) -> 0xB
+    a = 0xA;    reset_bit(&a, 0) -> 0xA
+    a = 0xFF;   reset_two_bits(&a, 3) -> 0xE7
+    a = 0xB7;   reset_two_bits(&a, 3) -> 0xA7
+    a = 0xB;    set_bit(&a, 0) -> 0xB
+    a = 0xE;    set_bit(&a, 2) -> 0xE
+    a = 0xEF;   set_two_bits_to(&a, 3, 1) -> 0xEF
+    a = 0xB7;   set_two_bits_to(&a, 3, 2) -> 0xB7
+    struct vector b;
+    b.x = 4;
+    b.y = -2;
+    vector_length(&b); b.length = 4.47
+\end{lstlisting}
+\end{center}
+
+Števila v šestnajstiški obliki izpišete z ukazom \texttt{printf(``\%X``,x);} Za reševanje nalog uporabite enega izmed spletnih simulatorjev C-ja, na primer \href{https://www.onlinegdb.com/online_c_compiler}{https://www.onlinegdb.com/online\_c\_compiler}.
+
+\end{document}
